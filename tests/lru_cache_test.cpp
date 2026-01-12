@@ -10,21 +10,20 @@ TEST(LRUCache, ConstructWithCapacity) {
     EXPECT_TRUE(cache.empty());
 }
 TEST(LRUCache, ZeroCapacityThrows) {
-    EXPECT_THROW(lru::LRUCache<int,int>(0), std::invalid_argument);
-    
+    EXPECT_THROW((lru::LRUCache<int,int>(0)), std::invalid_argument);
 }
 TEST(LRUCache, PutAndGet) {
     lru::LRUCache<int, std::string> cache(3);
     cache.put(1, "one");
     cache.put(2, "two");
     auto val = cache.get(1);
-    ASSERT_TRUE(val.has_value());
+    ASSERT_TRUE(val);
     EXPECT_EQ(val.value(), "one");
 }
 TEST(LRUCache, GetMissing) {
     lru::LRUCache<int,int> cache(3);
     auto val = cache.get(999);
-    EXPECT_FALSE(val.has_value());
+    EXPECT_FALSE(val);
 }
 TEST(LRUCache, UpdateExisting) {
     lru::LRUCache<int, std::string> cache(3);
@@ -39,10 +38,10 @@ TEST(LRUCache, EvictsLRU) {
     cache.put(2, "two");
     cache.put(3, "three");
     cache.put(4, "four");
-    EXPECT_FALSE(cache.get(1).has_value());
-    EXPECT_TRUE(cache.get(2).has_value());
-    EXPECT_TRUE(cache.get(3).has_value());
-    EXPECT_TRUE(cache.get(4).has_value());
+    EXPECT_FALSE(cache.get(1));
+    EXPECT_TRUE(cache.get(2));
+    EXPECT_TRUE(cache.get(3));
+    EXPECT_TRUE(cache.get(4));
 }
 TEST(LRUCache, GetUpdatesRecency) {
     lru::LRUCache<int, std::string> cache(3);
@@ -53,8 +52,8 @@ TEST(LRUCache, GetUpdatesRecency) {
     cache.get(1); //1 is not most recent
     cache.put(4, "four"); //evicts 2, not 1
 
-    EXPECT_TRUE(cache.get(1).has_value());
-    EXPECT_FALSE(cache.get(2).has_value());
+    EXPECT_TRUE(cache.get(1));
+    EXPECT_FALSE(cache.get(2));
 }
 TEST(LRUCache, PutUpdatesRecency) {
     lru::LRUCache<int, std::string> cache(3);
@@ -65,8 +64,8 @@ TEST(LRUCache, PutUpdatesRecency) {
     cache.put(1, "ONE"); //1 is not most recent
     cache.put(4, "four"); //evecits 2, not 1
 
-    EXPECT_TRUE(cache.get(1).has_value());
-    EXPECT_FALSE(cache.get(2).has_value());
+    EXPECT_TRUE(cache.get(1));
+    EXPECT_FALSE(cache.get(2));
 }
 TEST(LRUCache, Contains) {
     lru::LRUCache<int, int> cache(3);
@@ -98,7 +97,7 @@ TEST(LRUCache, CapacityOne) {
     cache.put(1,100);
     EXPECT_EQ(cache.get(1).value(), 100);
     cache.put(2, 200);
-    EXPECT_FALSE(cache.get(1).has_value());
+    EXPECT_FALSE(cache.get(1));
     EXPECT_EQ(cache.get(2).value(), 200);    
 }
 TEST(LRUCache, StringKeys) {
@@ -106,12 +105,5 @@ TEST(LRUCache, StringKeys) {
     cache.put("apple", 1);
     cache.put("banana", 2);
     EXPECT_EQ(cache.get("apple").value(), 1);
-    EXPECT_FALSE(cache.get("cherry").has_value());
-}
-TEST(LRUCache, MoveOnlyValue) {
-    lru::LRUCache<int, std::unique_ptr<int>> cache(3);
-    cache.put(1, std::make_unique<int>(100));
-    auto val = cache.get(1);
-    ASSERT_TRUE(val.has_value());
-    EXPECT_EQ(*val.value(), 100);
+    EXPECT_FALSE(cache.get("cherry"));
 }

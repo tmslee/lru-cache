@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(lru_cache VERSION 1.0.0 LANUGAGES CXX)
+project(lru_cache VERSION 1.0.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -13,6 +13,7 @@ if(ENABLE_SANITIZERS)
     add_link_options(-fsanitize=address,undefined)
 endif()
 
+# we lru_cache is header only. this is why we do INTERFACE
 add_library(lru_cache INTERFACE)
 target_include_directories(lru_cache INTERFACE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
